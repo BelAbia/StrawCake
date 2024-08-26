@@ -1,4 +1,6 @@
 using Hangfire;
+using Hangfire.Console;
+using Hangfire.Dashboard;
 using Hangfire.Raven.Storage;
 using StrawCake.Dominio.Servicos;
 using System.Security.Cryptography.X509Certificates;
@@ -33,14 +35,18 @@ builder.Services.AddHangfire(op =>
         {
             op.UseRavenStorage(url, "HangfireDB");
         }
+
+        op.UseConsole();
+        op.UseFilter(new AutomaticRetryAttribute { Attempts = 3 });
     });
 });
 builder.Services.AddHangfireServer();
 
-
-
 var app = builder.Build();
-app.UseHangfireDashboard();
+app.UseHangfireDashboard(options: new DashboardOptions
+{
+    Authorization = new[] { new HangfireAuthorizationFilter() }
+});
 
 app.UseHttpsRedirection();
 
@@ -50,3 +56,12 @@ app.MapControllers();
 
 app.Run();
 var client = new BackgroundJobServer();
+
+public class HangfireAuthorizationFilter : IDashboardAuthorizationFilter
+{
+    public bool Authorize(DashboardContext context)
+    {
+        // var userIdentity = context.GetHttpContext().User.Identity;
+        return true;
+    }
+}
