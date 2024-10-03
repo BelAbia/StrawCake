@@ -1,4 +1,5 @@
-﻿using Raven.Client.Documents.Session;
+﻿using Hangfire;
+using Raven.Client.Documents.Session;
 using StrawCake.Dominio.RavenDB;
 using System;
 using System.Collections.Generic;
@@ -15,15 +16,20 @@ namespace StrawCake.Dominio.Servicos
             using (IDocumentSession session = DocumentStoreHolder.Store.OpenSession())
             {
                 session.Store(bolo);
-                session.SaveChanges();
+                //session.SaveChanges();
             }
+
+            //primeira muda o status para "em criação"
+            //depois no enfileiramento tenta criar com sucesso, caso seja criado com sucesso mudar o status para "criado", se não mudar o status para erro
 
             return bolo;
         } 
+
         
         public List<Bolo> ObterTodos()
         {
             using IDocumentSession session = DocumentStoreHolder.Store.OpenSession();
+            BackgroundJob.Enqueue(() => Console.WriteLine("obtidos todos"));
             return session.Query<Bolo>().ToList();
 
         }
