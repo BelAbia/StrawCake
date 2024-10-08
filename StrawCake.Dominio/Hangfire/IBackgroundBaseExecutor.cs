@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace StrawCake.Dominio.Hangfire
 {
-    public interface IEnfileirar
+    public interface IBackgroundBaseExecutor
     {
-        public void Enfileirar<T>(Bolo bolo)
-        {
-        }
+        void Executar(Bolo bolo);
     }
 }
