@@ -1,18 +1,12 @@
 ﻿using Raven.Client.Documents;
 using Raven.Client.Documents.Conventions;
-using Raven.Client.Documents.Operations.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StrawCake.Dominio.RavenDB
 {
     public static class DocumentStoreHolder
     {
-        static X509Certificate2 clientCertificate = new X509Certificate2("C:\\Users\\Usuario\\Documents\\CertRaven-PESSOAL\\free.isacastro.client.certificate.pfx");
+        static X509Certificate2 clientCertificate = new X509Certificate2(ConstantesDoRaven.CAMINHO_CERTIFICADO_RAVEN);
 
         private static readonly Lazy<IDocumentStore> LazyStore =
             new Lazy<IDocumentStore>(() =>
@@ -20,9 +14,8 @@ namespace StrawCake.Dominio.RavenDB
                 var store = new DocumentStore
                 {
                     Certificate = clientCertificate,
-                    //Urls = new[] { "http://127.0.0.1:8080/" },
-                    Urls = new[] { "https://a.free.isacastro.ravendb.cloud/" },
-                    Database = "StrawCake",
+                    Urls = new[] { ConstantesDoRaven.URL_RAVEN_CLIENT, ConstantesDoRaven.URL_RAVEN_DOCKER },
+                    Database = ConstantesDoRaven.NOME_BASE_STRAWCAKE,
                     Conventions = ObterPadroesDoBanco()
                 };
 

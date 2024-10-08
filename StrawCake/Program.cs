@@ -2,23 +2,24 @@ using Hangfire;
 using Hangfire.Console;
 using Hangfire.Dashboard;
 using Hangfire.Raven.Storage;
+using StrawCake.Dominio.RavenDB;
 using StrawCake.Dominio.Servicos;
 using System.Security.Cryptography.X509Certificates;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<ServicoBolo>();
 
-var conexaoDoHangfire = Environment.GetEnvironmentVariable("URL_CLIENT_PESSOAL")
+// URL_RAVEN_DOCKER
+//URL_RAVEN_CLIENT
+var conexaoDoHangfire = Environment.GetEnvironmentVariable(ConstantesDoRaven.URL_RAVEN_DOCKER)
         ?? throw new Exception($"Variável de Ambiente [URL_CLIENT_PESSOAL] não configurada, por favor informar a conexão com o banco!");
 
-var certificado = new X509Certificate2(Environment.GetEnvironmentVariable("CERTIFICADO_PESSOAL"));
+var certificado = new X509Certificate2(Environment.GetEnvironmentVariable(ConstantesDoRaven.CERTIFICADO));
 
 builder.Services.AddHangfire(op =>
 {
@@ -27,19 +28,20 @@ builder.Services.AddHangfire(op =>
     .ToList()
     .ForEach(url =>
     {
-        if (certificado != null)
-        {
-            op.UseRavenStorage(url, "HangfireDB", certificado);
-        }
-        else
-        {
-            op.UseRavenStorage(url, "HangfireDB");
-        }
+            op.UseRavenStorage(url, ConstantesDoRaven.NOME_BASE_HANGFIRE);
+        //if (certificado != null)
+        //{
+        //    op.UseRavenStorage(url, ConstantesDoRaven.NOME_BASE_HANGFIRE, certificado);
+        //}
+        //else
+        //{
+        //}
 
         op.UseConsole();
         op.UseFilter(new AutomaticRetryAttribute { Attempts = 3 });
     });
 });
+
 builder.Services.AddHangfireServer();
 
 var app = builder.Build();

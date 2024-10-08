@@ -2,13 +2,14 @@
 using StrawCake.Dominio;
 using StrawCake.Dominio.Servicos;
 
-namespace StrawBerry.Controllers
+namespace StrawCake.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class BoloController : ControllerBase
     {
         private readonly ServicoBolo _servicoBolo;
+
         public BoloController(ServicoBolo servicoBolo)
         {
             _servicoBolo = servicoBolo;
