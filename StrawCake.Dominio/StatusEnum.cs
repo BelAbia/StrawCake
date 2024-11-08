@@ -7,16 +7,13 @@ using System.Threading.Tasks;
 
 namespace StrawCake.Dominio
 {
-    public class StatusEnum
+    public enum Status
     {
-        public enum Status
-        {
-            [Description ("Finalizado")]
-            Finalizado,
-            [Description("Em Andamento")]
-            EmAndamento,
-            [Description("Erro")]
-            Erro
-        }
+        [Description ("Finalizado")]
+        Finalizado,
+        [Description("Em Andamento")]
+        EmAndamento,
+        [Description("Erro")]
+        Erro
     }
 }

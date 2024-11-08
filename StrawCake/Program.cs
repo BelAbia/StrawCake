@@ -2,6 +2,7 @@ using Hangfire;
 using Hangfire.Console;
 using Hangfire.Dashboard;
 using Hangfire.Raven.Storage;
+using StrawCake.Dominio.Hangfire;
 using StrawCake.Dominio.RavenDB;
 using StrawCake.Dominio.Servicos;
 using System.Security.Cryptography.X509Certificates;
@@ -13,6 +14,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<ServicoBolo>();
+builder.Services.AddScoped<ExecutorDeCriacaoDeBolo>();
+
 
 // URL_RAVEN_DOCKER
 //URL_RAVEN_CLIENT

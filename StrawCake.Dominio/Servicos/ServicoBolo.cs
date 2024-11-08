@@ -1,5 +1,6 @@
 ﻿using Hangfire;
 using Raven.Client.Documents.Session;
+using StrawCake.Dominio.Hangfire;
 using StrawCake.Dominio.RavenDB;
 using System;
 using System.Collections.Generic;
@@ -11,21 +12,44 @@ namespace StrawCake.Dominio.Servicos
 {
     public class ServicoBolo
     {
+        private readonly ExecutorDeCriacaoDeBolo _executorDeCriacaoDeBolo;
+        public ServicoBolo(ExecutorDeCriacaoDeBolo executorDeCriacaoDeBolo)
+        {
+            _executorDeCriacaoDeBolo = executorDeCriacaoDeBolo;
+        }
+
         public Bolo Adicionar(Bolo bolo)
         {
             using (IDocumentSession session = DocumentStoreHolder.Store.OpenSession())
             {
+                bolo.Status = Status.EmAndamento;
                 session.Store(bolo);
-                //session.SaveChanges();
             }
 
+             
+            _executorDeCriacaoDeBolo.ExecutarCriacaoDeBolo(bolo);
             //primeira muda o status para "em criação"
             //depois no enfileiramento tenta criar com sucesso, caso seja criado com sucesso mudar o status para "criado", se não mudar o status para erro
 
             return bolo;
-        } 
+        }
 
-        
+        public void AlterarStatusDoBolo(IDocumentSession session, Bolo bolo)
+        {
+            session.SaveChanges();
+            session.Load<Bolo>(bolo.Id);
+
+            if (bolo != null)
+            {
+                bolo.Status = Status.Finalizado;
+            }
+            else
+            {
+                bolo.Status = Status.Erro;
+            }
+        }
+
+
         public List<Bolo> ObterTodos()
         {
             using IDocumentSession session = DocumentStoreHolder.Store.OpenSession();

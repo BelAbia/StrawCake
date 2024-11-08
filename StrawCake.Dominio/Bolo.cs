@@ -12,6 +12,7 @@ namespace StrawCake.Dominio
         public Recheio Recheio { get; set; }
         public Cobertura Cobertura { get; set; }
         public Tamanho Tamanho { get; set; }
+        public Status Status { get; set; }
         public double Valor { get; set; }
     }
 }

@@ -1,14 +1,19 @@
 ﻿using Raven.Client.Documents;
 using Raven.Client.Documents.Conventions;
-using System.Security.Cryptography.X509Certificates;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace StrawCake.Dominio.RavenDB
 {
-    public static class DocumentStoreHolder
+    public static class ControladorDeDocumentos
     {
-        static X509Certificate2 clientCertificate = new X509Certificate2(ConstantesDoRaven.CAMINHO_CERTIFICADO_RAVEN);
+        public static IDocumentStore Store => store.Value;
 
-        private static readonly Lazy<IDocumentStore> LazyStore =
+        public static readonly Lazy<IDocumentStore> store =
             new Lazy<IDocumentStore>(() =>
             {
                 var store = new DocumentStore
@@ -22,7 +27,7 @@ namespace StrawCake.Dominio.RavenDB
                 return store.Initialize();
             });
 
-        private static DocumentConventions ObterPadroesDoBanco()
+        public static DocumentConventions ObterPadroesDoBanco()
         {
             return new DocumentConventions
             {
@@ -32,7 +37,5 @@ namespace StrawCake.Dominio.RavenDB
                 IdentityPartsSeparator = '-'
             };
         }
-
-        public static IDocumentStore Store => LazyStore.Value;
     }
 }
