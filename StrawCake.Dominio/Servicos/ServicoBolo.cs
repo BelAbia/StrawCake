@@ -26,12 +26,24 @@ namespace StrawCake.Dominio.Servicos
                 session.Store(bolo);
             }
 
-             
-            _executorDeCriacaoDeBolo.ExecutarCriacaoDeBolo(bolo);
-            //primeira muda o status para "em criação"
-            //depois no enfileiramento tenta criar com sucesso, caso seja criado com sucesso mudar o status para "criado", se não mudar o status para erro
-
+            BackgroundJob.Schedule(() => EnfileirarCriacacaoDeBolo(bolo), TimeSpan.FromSeconds(5));
             return bolo;
+        }
+
+        public void EnfileirarCriacacaoDeBolo(Bolo bolo)
+        {
+            try
+            {
+                using (IDocumentSession session = DocumentStoreHolder.Store.OpenSession())
+                {
+                    bolo.Status = Status.Finalizado;
+                    session.SaveChanges();
+                }
+            }
+            catch (Exception ex) { 
+                bolo.Status =  Status.Erro;
+                throw new Exception(ex.Message);
+            }
         }
 
         public void AlterarStatusDoBolo(IDocumentSession session, Bolo bolo)
